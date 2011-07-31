@@ -10,6 +10,7 @@
 		9F35FF3D13E5FA9A002E7D5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F35FF3C13E5FA99002E7D5E /* Foundation.framework */; };
 		9F35FF4013E5FA9A002E7D5E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F35FF3F13E5FA9A002E7D5E /* main.m */; };
 		9F35FF4413E5FA9A002E7D5E /* ChapterX.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9F35FF4313E5FA9A002E7D5E /* ChapterX.1 */; };
+		9F35FF4C13E5FC89002E7D5E /* Chapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F35FF4B13E5FC89002E7D5E /* Chapter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,8 +30,10 @@
 		9F35FF3813E5FA99002E7D5E /* ChapterX */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChapterX; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F35FF3C13E5FA99002E7D5E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9F35FF3F13E5FA9A002E7D5E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		9F35FF4213E5FA9A002E7D5E /* ChapterX-Prefix.pch */ = {isa = PBXFileReference; path = "ChapterX-Prefix.pch"; sourceTree = "<group>"; };
+		9F35FF4213E5FA9A002E7D5E /* ChapterX-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ChapterX-Prefix.pch"; sourceTree = "<group>"; };
 		9F35FF4313E5FA9A002E7D5E /* ChapterX.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ChapterX.1; sourceTree = "<group>"; };
+		9F35FF4A13E5FC89002E7D5E /* Chapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Chapter.h; path = ../Chapter.h; sourceTree = "<group>"; };
+		9F35FF4B13E5FC89002E7D5E /* Chapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Chapter.m; path = ../Chapter.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +76,8 @@
 		9F35FF3E13E5FA9A002E7D5E /* ChapterX */ = {
 			isa = PBXGroup;
 			children = (
+				9F35FF4A13E5FC89002E7D5E /* Chapter.h */,
+				9F35FF4B13E5FC89002E7D5E /* Chapter.m */,
 				9F35FF3F13E5FA9A002E7D5E /* main.m */,
 				9F35FF4313E5FA9A002E7D5E /* ChapterX.1 */,
 				9F35FF4113E5FA9A002E7D5E /* Supporting Files */,
@@ -136,6 +141,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F35FF4013E5FA9A002E7D5E /* main.m in Sources */,
+				9F35FF4C13E5FC89002E7D5E /* Chapter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
