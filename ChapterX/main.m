@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Chapter.h"
+#import "ChaptersEditor.h"
 
 int main (int argc, const char * argv[])
 {
@@ -16,9 +17,9 @@ int main (int argc, const char * argv[])
     NSURL *xmlURL;
     NSError *xmlError;
     
-    if (argc < 2) {
-        fprintf(stderr, "Missing input XML file\n"); 
-        fprintf(stderr, "Usage: ChapterX file.xml\n");
+    if (argc < 3) {
+        fprintf(stderr, "Not enough arguments\n"); 
+        fprintf(stderr, "Usage: ChapterX file.xml file.m4b\n");
         exit(1);
     }
     
@@ -37,9 +38,13 @@ int main (int argc, const char * argv[])
         exit(1);
     }
     
+    NSMutableArray *chapters = [[NSMutableArray alloc] init];
     for (NSXMLNode *n in nodes) {
         Chapter *chapter = [[Chapter alloc] initWithXMLNode:n];
+        [chapters addObject:chapter];
     }
+    
+    addChapters(argv[2], chapters);
 
     [pool drain];
     return 0;
