@@ -20,6 +20,6 @@
 @property (nonatomic,retain) NSString *link;
 @property (nonatomic,assign) NSInteger startTime;
 
-
+- (id) initWithXMLNode: (NSXMLNode*)node;
 
 @end
