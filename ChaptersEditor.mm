@@ -46,18 +46,23 @@ int addChapters(const char *mp4, NSArray *chapters)
     trackDuration /= trackTimeScale;
     vector<MP4Chapter_t> mp4chapters;
     
-    NSInteger startTime = 0;
     Chapter *firstChapter = [chapters objectAtIndex:0];
     if (firstChapter.startTime != 0) {
         MP4Chapter_t chap;
+        chap.title[0] = '\0';
         chap.duration = firstChapter.startTime;
         mp4chapters.push_back( chap );
     }
 
-    for (Chapter *chapter in chapters) {
+    for (int idx = 0; idx < [chapters count]; idx++) {
+        Chapter *chapter = [chapters objectAtIndex:idx];
         MP4Chapter_t chap;
-        chap.duration = chapter.startTime - startTime;
-        startTime = chapter.startTime;
+        if (idx == [chapters count] -1)
+            trackDuration -= chapter.startTime;
+        else {
+            Chapter *nextChapter = [chapters objectAtIndex:(idx+1)];
+            chap.duration = nextChapter.startTime - chapter.startTime;
+        }
         strncpy(chap.title, 
                 [chapter.title UTF8String], sizeof(chap.title)-1);
         
