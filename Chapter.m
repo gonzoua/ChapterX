@@ -22,6 +22,26 @@
 
 @end
 
+static NSInteger timeToMilliseconds(NSString* timeString)
+{
+    NSArray *chunks = [timeString componentsSeparatedByString:@":"];
+    NSInteger timeValue = 0;
+    if ([chunks count] == 0)
+        return 0;
+
+    int idx = 0;
+    if ([chunks count] == 3) {
+        timeValue += [[chunks objectAtIndex:idx] intValue] * 3600;
+        idx++;
+    }
+    
+    timeValue += [[chunks objectAtIndex:idx] intValue] * 60;
+    idx++;
+    
+    timeValue += roundtol([[chunks objectAtIndex:idx] floatValue]*1000);
+    return timeValue;
+}
+
 @implementation Chapter
 
 @synthesize startTime = _startTime;
@@ -46,11 +66,11 @@
 {
     NSError *xmlError;
     self = [self init];
-    
+    NSString *t = [node stringForXPath:@"@starttime" error:&xmlError];
+    self.startTime = timeToMilliseconds(t);
     self.title = [node stringForXPath:@"./title[1]" error:&xmlError];
     self.link = [node stringForXPath:@"./link[1]" error:&xmlError];
     self.artPath = [node stringForXPath:@"./picture[1]" error:&xmlError];
-    
     return self;
 }
 
