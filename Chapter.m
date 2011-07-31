@@ -10,11 +10,19 @@
 
 @implementation Chapter
 
+@synthesize startTime = _startTime;
+@synthesize title = _title;
+@synthesize link = _link;
+@synthesize artPath = _artPath;
+
 - (id)init
 {
     self = [super init];
     if (self) {
-        // Initialization code here.
+        _title = nil;
+        _link = nil;
+        _artPath = nil;
+        _startTime = 0;
     }
     
     return self;

@@ -9,7 +9,17 @@
 #import <Foundation/Foundation.h>
 
 @interface Chapter : NSObject {
-
+    NSInteger _startTime;
+    NSString *_artPath;
+    NSString *_title;
+    NSString *_link;
 }
+
+@property (nonatomic,retain) NSString *artPath;
+@property (nonatomic,retain) NSString *title;
+@property (nonatomic,retain) NSString *link;
+@property (nonatomic,assign) NSInteger startTime;
+
+
 
 @end
