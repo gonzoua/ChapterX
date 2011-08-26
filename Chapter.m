@@ -31,11 +31,11 @@ static NSInteger timeToMilliseconds(NSString* timeString)
 
     int idx = 0;
     if ([chunks count] == 3) {
-        timeValue += [[chunks objectAtIndex:idx] intValue] * 3600;
+        timeValue += [[chunks objectAtIndex:idx] intValue] * 3600 * 1000;
         idx++;
     }
     
-    timeValue += [[chunks objectAtIndex:idx] intValue] * 60;
+    timeValue += [[chunks objectAtIndex:idx] intValue] * 60 * 1000;
     idx++;
     
     timeValue += roundtol([[chunks objectAtIndex:idx] floatValue]*1000);
