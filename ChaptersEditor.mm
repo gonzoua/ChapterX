@@ -57,8 +57,12 @@ int addChapters(const char *mp4, NSArray *chapters)
     for (int idx = 0; idx < [chapters count]; idx++) {
         Chapter *chapter = [chapters objectAtIndex:idx];
         MP4Chapter_t chap;
-        if (idx == [chapters count] -1)
-            trackDuration -= chapter.startTime;
+        if (idx == [chapters count] -1) {
+            if (trackDuration*1000 > chapter.startTime)
+                chap.duration = trackDuration*1000 - chapter.startTime;
+            else
+                chap.duration = 0;
+        }
         else {
             Chapter *nextChapter = [chapters objectAtIndex:(idx+1)];
             chap.duration = nextChapter.startTime - chapter.startTime;
