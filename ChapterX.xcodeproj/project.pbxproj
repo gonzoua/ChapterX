@@ -204,8 +204,8 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ChapterX/ChapterX-Prefix.pch";
-				HEADER_SEARCH_PATHS = /usr/local/include;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				HEADER_SEARCH_PATHS = /Users/gonzo/Projects/opt/include;
+				LIBRARY_SEARCH_PATHS = /Users/gonzo/Projects/opt/lib;
 				OTHER_LDFLAGS = "-lmp4v2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -216,8 +216,8 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ChapterX/ChapterX-Prefix.pch";
-				HEADER_SEARCH_PATHS = /usr/local/include;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				HEADER_SEARCH_PATHS = /Users/gonzo/Projects/opt/include;
+				LIBRARY_SEARCH_PATHS = /Users/gonzo/Projects/opt/lib;
 				OTHER_LDFLAGS = "-lmp4v2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
