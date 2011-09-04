@@ -14,6 +14,7 @@
     NSString *_title;
     NSString *_link;
     NSString *_linkText;
+    NSString *_xmlPath;
 }
 
 @property (nonatomic,retain) NSString *artPath;

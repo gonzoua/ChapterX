@@ -111,16 +111,6 @@ NSData *generateSample(NSString *text, NSString *url)
     atom[ptr++] = 0; // no hint
     NSData *result = [NSData dataWithBytes:atom length:ptr];
 
-#if 0
-    NSLog(@"-- %@ -- %@ -- %d/%d", text, url, ptr, atomLength);
-    for (int i = 0; i < atomLength + 2; i++) {
-        fprintf(stderr, "%02x ", atom[i]);
-        if ((i % 16) == 0xf)
-            fprintf(stderr, "\n");
-    }
-    fprintf(stderr, "\n");
-#endif
-
     return result;
 }
 
@@ -229,8 +219,8 @@ int addChapters(const char *mp4, NSArray *chapters)
         if (img == nil)
             img = [NSData dataWithBytes:__1x1_png length:__1x1_png_len];
 
-        NSString *name = [NSString stringWithFormat:@"%d.jpg", idx];
-        [img writeToFile:name atomically:nil];
+        // NSString *name = [NSString stringWithFormat:@"%d.jpg", idx];
+        // [img writeToFile:name atomically:nil];
 
         MP4WriteSample(mp4File, jpegTrack, 
 		    (const uint8_t *)[img bytes], [img length], chap.duration*trackTimeScale/1000);

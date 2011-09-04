@@ -58,6 +58,7 @@ static NSInteger timeToMilliseconds(NSString* timeString)
         _link = nil;
         _artPath = nil;
         _startTime = 0;
+        _xmlPath = nil;
     }
     
     return self;
@@ -66,14 +67,31 @@ static NSInteger timeToMilliseconds(NSString* timeString)
 - (id) initWithXMLNode: (NSXMLNode*)node
 {
     NSError *xmlError;
-    self = [self init];
     NSString *t = [node stringForXPath:@"@starttime" error:&xmlError];
     self.startTime = timeToMilliseconds(t);
     self.title = [node stringForXPath:@"./title[1]" error:&xmlError];
     self.link = [node stringForXPath:@"./link[1]/@href" error:&xmlError];
     self.linkText = [node stringForXPath:@"./link[1]" error:&xmlError];
-    self.artPath = [node stringForXPath:@"./picture[1]" error:&xmlError];
+    if (_xmlPath == nil)
+        self.artPath = [node stringForXPath:@"./picture[1]" error:&xmlError];
+    else
+    {
+        NSString *path = [node stringForXPath:@"./picture[1]" error:&xmlError];
+        self.artPath = [_xmlPath stringByAppendingPathComponent:path];
+        //  NSLog(@"Test: %@ -> %@", path, self.artPath);
+    }
     return self;
 }
+
+- (id) initWithXMLNode: (NSXMLNode*)node path:(NSString*)path
+{
+    NSError *xmlError;
+    self = [self init];
+    _xmlPath = [path copy];
+    self = [self initWithXMLNode:node];
+    return self;
+}
+
+
 
 @end

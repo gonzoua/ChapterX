@@ -23,6 +23,8 @@ int main (int argc, const char * argv[])
         exit(1);
     }
     
+    NSURL *testURL = [NSURL fileURLWithPath:[NSString stringWithCString:argv[1] encoding:NSUTF8StringEncoding]];
+    NSString *xmlPath = [[testURL path] stringByDeletingLastPathComponent];
     xmlURL = [NSURL fileURLWithPath:[NSString stringWithCString:argv[1] encoding:NSUTF8StringEncoding]];
 
     NSXMLDocument *document = [[NSXMLDocument alloc] initWithContentsOfURL:xmlURL options:0 error:&xmlError];
@@ -40,7 +42,7 @@ int main (int argc, const char * argv[])
     
     NSMutableArray *chapters = [[NSMutableArray alloc] init];
     for (NSXMLNode *n in nodes) {
-        Chapter *chapter = [[Chapter alloc] initWithXMLNode:n];
+        Chapter *chapter = [[Chapter alloc] initWithXMLNode:n path:xmlPath];
         [chapters addObject:chapter];
     }
     
