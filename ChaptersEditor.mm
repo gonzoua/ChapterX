@@ -20,6 +20,7 @@ extern "C" {
 using namespace std;
 
 #define ITUNES_COVER_SIZE 300
+#define HAVE_SUBTITLES 1
 
 static
 NSData *loadImage(NSString *path)
@@ -77,7 +78,8 @@ NSData *generateSample(NSString *text, NSString *url)
 {
     int textLength = [text lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
     int urlLength = [url lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-    int atomLength = textLength + urlLength + 14;
+    int atomLength = urlLength + 14;
+    int fullLength = textLength + urlLength + 14;
     int ptr;
 
     unsigned char *atom = (unsigned char*)malloc(textLength + urlLength + 16);
@@ -107,7 +109,7 @@ NSData *generateSample(NSString *text, NSString *url)
         memcpy(atom+ptr, [url UTF8String], urlLength);
     ptr += urlLength;
     atom[ptr++] = 0; // no hint
-    NSData *result = [NSData dataWithBytes:atom length:(atomLength + 2)];
+    NSData *result = [NSData dataWithBytes:atom length:ptr];
 
 #if 0
     NSLog(@"-- %@ -- %@ -- %d/%d", text, url, ptr, atomLength);
@@ -153,18 +155,18 @@ int addChapters(const char *mp4, NSArray *chapters)
     MP4Duration trackDuration = origTrackDuration / trackTimeScale;
     vector<MP4Chapter_t> mp4chapters;
 
-    MP4TrackId jpegTrack = MP4AddJpegVideoTrack(mp4File, 1000, MP4_INVALID_DURATION,
+    MP4TrackId jpegTrack = MP4AddJpegVideoTrack(mp4File, trackTimeScale, MP4_INVALID_DURATION,
         300, 300);
 
 #ifdef HAVE_SUBTITLES
     // Add subtitles
-    MP4TrackId subtitlesTrack = MP4AddSubtitleTrack( mp4File, 1000, 160, 160 );
+    MP4TrackId subtitlesTrack = MP4AddSubtitleTrack( mp4File, trackTimeScale, 300, 300 );
 
     const uint8_t textColor[4] = { 0,0,0,255 };
 
     MP4SetTrackIntegerProperty(mp4File, subtitlesTrack, "tkhd.alternate_group", 0);
 
-    MP4SetTrackIntegerProperty(mp4File, subtitlesTrack, "mdia.minf.stbl.stsd.tx3g.dataReferenceIndex", 0);
+    MP4SetTrackIntegerProperty(mp4File, subtitlesTrack, "mdia.minf.stbl.stsd.tx3g.dataReferenceIndex", 1);
     MP4SetTrackIntegerProperty(mp4File, subtitlesTrack, "mdia.minf.stbl.stsd.tx3g.horizontalJustification", 1);
     MP4SetTrackIntegerProperty(mp4File, subtitlesTrack, "mdia.minf.stbl.stsd.tx3g.verticalJustification", 255);
 
@@ -191,16 +193,15 @@ int addChapters(const char *mp4, NSArray *chapters)
         chap.duration = firstChapter.startTime;
         mp4chapters.push_back( chap );
 
-        // const char *url = [firstChapter.link UTF8String];
         NSData *img = [NSData dataWithBytes:__1x1_png length:__1x1_png_len];
         MP4WriteSample(mp4File, jpegTrack, 
-		    (const uint8_t *)[img bytes], [img length], chap.duration);
+		    (const uint8_t *)[img bytes], [img length], chap.duration*trackTimeScale/1000);
 
 #ifdef HAVE_SUBTITLES
 		NSData* subtitlesSample = generateSample(@"", @" ");
 
         MP4WriteSample(mp4File, subtitlesTrack, 
-		    (const uint8_t *)[subtitlesSample bytes], [subtitlesSample length], chap.duration);
+		    (const uint8_t *)[subtitlesSample bytes], [subtitlesSample length], chap.duration*trackTimeScale/1000);
 #endif
     }
 
@@ -232,7 +233,7 @@ int addChapters(const char *mp4, NSArray *chapters)
         [img writeToFile:name atomically:nil];
 
         MP4WriteSample(mp4File, jpegTrack, 
-		    (const uint8_t *)[img bytes], [img length], chap.duration);
+		    (const uint8_t *)[img bytes], [img length], chap.duration*trackTimeScale/1000);
 
 #ifdef HAVE_SUBTITLES
 		NSData* subtitlesSample;
@@ -242,7 +243,7 @@ int addChapters(const char *mp4, NSArray *chapters)
 		    subtitlesSample = generateSample(@"", @" ");
 
         MP4WriteSample(mp4File, subtitlesTrack, 
-		    (const uint8_t *)[subtitlesSample bytes], [subtitlesSample length], chap.duration);
+		    (const uint8_t *)[subtitlesSample bytes], [subtitlesSample length], chap.duration*trackTimeScale/1000);
 #endif
     }
     
@@ -258,28 +259,9 @@ int addChapters(const char *mp4, NSArray *chapters)
 
     MP4AddTrackReference(mp4File, "tref.chap", jpegTrack, refTrack);
 
-#if 0
-    /* translate the track */
-    uint8_t* val;
-    uint8_t nval[36];
-    uint32_t *ptr32 = (uint32_t*) nval;
-    uint32_t size;
-
-            MP4GetTrackBytesProperty(mp4File, subtitlesTrack, "tkhd.matrix", &val, &size);
-            memcpy(nval, val, size);
-
-            const uint32_t ytranslation = (job->height - height) * 0x10000;
-
-#ifdef WORDS_BIGENDIAN
-            ptr32[7] = ytranslation;
-#else
-            /* we need to switch the endianness, as the file format expects big endian */
-            ptr32[7] = ((ytranslation & 0x000000FF) << 24) + ((ytranslation & 0x0000FF00) << 8) +
-                            ((ytranslation & 0x00FF0000) >> 8) + ((ytranslation & 0xFF000000) >> 24);
-#endif
-
-            MP4SetTrackBytesProperty(mp4File, subtitlesTrack, "tkhd.matrix", nval, size);
-#endif
+    MP4SetTrackLanguage(mp4File, refTrack, "eng");
+    MP4SetTrackLanguage(mp4File, jpegTrack, "eng");
+    MP4SetTrackLanguage(mp4File, subtitlesTrack, "eng");
     MP4Close(mp4File);
     
     return 0;
