@@ -47,6 +47,7 @@ static NSInteger timeToMilliseconds(NSString* timeString)
 @synthesize startTime = _startTime;
 @synthesize title = _title;
 @synthesize link = _link;
+@synthesize linkText = _linkText;
 @synthesize artPath = _artPath;
 
 - (id)init
@@ -69,7 +70,8 @@ static NSInteger timeToMilliseconds(NSString* timeString)
     NSString *t = [node stringForXPath:@"@starttime" error:&xmlError];
     self.startTime = timeToMilliseconds(t);
     self.title = [node stringForXPath:@"./title[1]" error:&xmlError];
-    self.link = [node stringForXPath:@"./link[1]" error:&xmlError];
+    self.link = [node stringForXPath:@"./link[1]/@href" error:&xmlError];
+    self.linkText = [node stringForXPath:@"./link[1]" error:&xmlError];
     self.artPath = [node stringForXPath:@"./picture[1]" error:&xmlError];
     return self;
 }

@@ -13,11 +13,13 @@
     NSString *_artPath;
     NSString *_title;
     NSString *_link;
+    NSString *_linkText;
 }
 
 @property (nonatomic,retain) NSString *artPath;
 @property (nonatomic,retain) NSString *title;
 @property (nonatomic,retain) NSString *link;
+@property (nonatomic,retain) NSString *linkText;
 @property (nonatomic,assign) NSInteger startTime;
 
 - (id) initWithXMLNode: (NSXMLNode*)node;

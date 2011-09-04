@@ -206,7 +206,11 @@
 				GCC_PREFIX_HEADER = "ChapterX/ChapterX-Prefix.pch";
 				HEADER_SEARCH_PATHS = /Users/gonzo/Projects/opt/include;
 				LIBRARY_SEARCH_PATHS = /Users/gonzo/Projects/opt/lib;
-				OTHER_LDFLAGS = "-lmp4v2";
+				OTHER_LDFLAGS = (
+					"-lmp4v2",
+					"-framework",
+					AppKit
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -218,7 +222,11 @@
 				GCC_PREFIX_HEADER = "ChapterX/ChapterX-Prefix.pch";
 				HEADER_SEARCH_PATHS = /Users/gonzo/Projects/opt/include;
 				LIBRARY_SEARCH_PATHS = /Users/gonzo/Projects/opt/lib;
-				OTHER_LDFLAGS = "-lmp4v2";
+				OTHER_LDFLAGS = (
+					"-lmp4v2",
+					"-framework",
+					AppKit
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
