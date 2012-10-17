@@ -1,4 +1,5 @@
-In order to build ChapterX application you'll need to buil
+In order to build ChapterX application you'll need to build libmp4v2 first 
+
 Download latest libmp4v2 release. At the moment it's 2.0.0
 URL http://code.google.com/p/mp4v2/downloads/list
 
