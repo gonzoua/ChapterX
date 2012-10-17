@@ -176,7 +176,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.7;
 			};
 			name = Debug;
 		};
@@ -195,7 +195,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.7;
 			};
 			name = Release;
 		};
@@ -204,12 +204,12 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ChapterX/ChapterX-Prefix.pch";
-				HEADER_SEARCH_PATHS = /Users/gonzo/Projects/opt/include;
-				LIBRARY_SEARCH_PATHS = /Users/gonzo/Projects/opt/lib;
+				HEADER_SEARCH_PATHS = "$(HOME)/opt/include";
+				LIBRARY_SEARCH_PATHS = "$(HOME)/opt/lib";
 				OTHER_LDFLAGS = (
 					"-lmp4v2",
 					"-framework",
-					AppKit
+					AppKit,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -220,12 +220,12 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ChapterX/ChapterX-Prefix.pch";
-				HEADER_SEARCH_PATHS = /Users/gonzo/Projects/opt/include;
-				LIBRARY_SEARCH_PATHS = /Users/gonzo/Projects/opt/lib;
+				HEADER_SEARCH_PATHS = "$(HOME)/opt/include";
+				LIBRARY_SEARCH_PATHS = "$(HOME)/opt/lib";
 				OTHER_LDFLAGS = (
 					"-lmp4v2",
 					"-framework",
-					AppKit
+					AppKit,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -250,6 +250,7 @@
 				9F35FF4913E5FA9A002E7D5E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
