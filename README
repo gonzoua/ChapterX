@@ -1,0 +1,17 @@
+In order to build ChapterX application you'll need to buil
+Download latest libmp4v2 release. At the moment it's 2.0.0
+URL http://code.google.com/p/mp4v2/downloads/list
+
+Uncompress it and apply patch:
+
+$ tar xvfj ~/Downloads/mp4v2-2.0.0.tar.bz2 
+$ cd mp4v2-2.0.0
+$ patch --dry-run -p0 < ~/Projects/ChapterX/libmp4v2.diff 
+
+Build and install:
+$ mkdir -p $HOME/opt/
+$ ./configure --prefix=$HOME/opt/ --disable-shared --enable-ub=i386,x86_64 --disable-gch
+$ make
+$ make install
+
+All set
