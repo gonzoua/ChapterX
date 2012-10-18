@@ -1,0 +1,217 @@
+diff -ur include/mp4v2/track.h include/mp4v2/track.h
+--- include/mp4v2/track.h	2012-05-20 15:11:52.000000000 -0700
++++ include/mp4v2/track.h	2012-10-16 22:39:30.000000000 -0700
+@@ -245,7 +245,13 @@
+     uint16_t      width,
+     uint16_t      height,
+     uint8_t       videoType DEFAULT(MP4_MPEG4_VIDEO_TYPE) );
+-
++MP4V2_EXPORT
++MP4TrackId MP4AddJpegVideoTrack(
++    MP4FileHandle hFile,
++    uint32_t      timeScale,
++    MP4Duration   sampleDuration,
++    uint16_t      width,
++    uint16_t      height);
+ MP4V2_EXPORT
+ MP4TrackId MP4AddH264VideoTrack(
+     MP4FileHandle hFile,
+@@ -435,6 +441,19 @@
+     MP4TrackId    trackId,
+     MP4Duration   duration );
+ 
++MP4V2_EXPORT
++bool MP4AddTrackReference(
++    MP4FileHandle hFile,
++    const char*   trefName,
++    MP4TrackId    trackId,
++    MP4TrackId    refTrackId );
++
++MP4V2_EXPORT
++bool MP4RemoveAllTrackReferences(
++    MP4FileHandle hFile,
++    const char*   trefName,
++    MP4TrackId    trackId );
++
+ /**
+  *  @param hFile handle of file for operation.
+  *  @param trackId id of track for operation.
+diff -ur src/mp4.cpp src/mp4.cpp
+--- src/mp4.cpp	2012-05-20 15:11:53.000000000 -0700
++++ src/mp4.cpp	2012-10-16 22:46:51.000000000 -0700
+@@ -1108,6 +1108,33 @@
+         return MP4_INVALID_TRACK_ID;
+     }
+ 
++    MP4TrackId MP4AddJpegVideoTrack(
++        MP4FileHandle hFile,
++        uint32_t timeScale,
++        MP4Duration sampleDuration,
++        uint16_t width,
++        uint16_t height)
++    {
++        if (MP4_IS_VALID_FILE_HANDLE(hFile)) {
++            try {
++                MP4File *pFile = (MP4File *)hFile;
++
++                return pFile->AddMP4JpegVideoTrack(timeScale,
++                                               sampleDuration,
++                                               width,
++                                               height);
++            } catch( Exception* x ) {
++                mp4v2::impl::log.errorf(*x);
++                delete x;
++            }
++            catch( ... ) {
++                mp4v2::impl::log.errorf( "%s: failed", __FUNCTION__ );
++            }
++        }
++        return MP4_INVALID_TRACK_ID;
++    }
++
++
+     MP4TrackId MP4AddEncVideoTrack(MP4FileHandle hFile,
+                                    uint32_t timeScale,
+                                    MP4Duration sampleDuration,
+@@ -4535,6 +4562,33 @@
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+ 
++bool MP4AddTrackReference(
++    MP4FileHandle hFile,
++    const char*   trefName,
++    MP4TrackId    trackId,
++    MP4TrackId    refTrackId )
++{
++    if( !MP4_IS_VALID_FILE_HANDLE( hFile ))
++        return false;
++
++    try {
++        ((MP4File*)hFile)->AddTrackReference2( trefName, trackId, refTrackId );
++        return true;
++    }
++    catch( Exception* x ) {
++        mp4v2::impl::log.errorf(*x);
++        delete x;
++    }
++    catch( ... ) {
++        mp4v2::impl::log.errorf("%s: failed", __FUNCTION__ );
++    }
++
++    return false;
++
++}
++
++///////////////////////////////////////////////////////////////////////////////
++
+ bool MP4SetTrackDurationPerChunk(
+     MP4FileHandle hFile,
+     MP4TrackId    trackId,
+diff -ur src/mp4file.cpp src/mp4file.cpp
+--- src/mp4file.cpp	2012-05-20 15:11:53.000000000 -0700
++++ src/mp4file.cpp	2012-10-16 22:38:13.000000000 -0700
+@@ -1055,6 +1055,13 @@
+     }
+ }
+ 
++void MP4File::AddTrackReference2(const char* trefName, MP4TrackId trackId, MP4TrackId refTrackId)
++{
++    AddDescendantAtoms(MakeTrackName(refTrackId, NULL), trefName);
++    AddTrackReference(MakeTrackName(refTrackId, trefName), trackId);
++}
++
++
+ uint32_t MP4File::FindTrackReference(const char* trefName,
+                                      MP4TrackId refTrackId)
+ {
+@@ -1719,6 +1726,27 @@
+ 
+     return trackId;
+ }
++MP4TrackId MP4File::AddMP4JpegVideoTrack(
++    uint32_t timeScale,
++    MP4Duration sampleDuration,
++    uint16_t width,
++    uint16_t height)
++{
++    MP4TrackId trackId = AddVideoTrackDefault(timeScale,
++                         sampleDuration,
++                         width,
++                         height,
++                         "jpeg");
++
++    SetTrackIntegerProperty(trackId,
++                            "mdia.minf.stbl.stsd.jpeg.width", width);
++    SetTrackIntegerProperty(trackId,
++                            "mdia.minf.stbl.stsd.jpeg.height", height);
++
++
++    return trackId;
++}
++
+ 
+ // ismacrypted
+ MP4TrackId MP4File::AddEncVideoTrack(uint32_t timeScale,
+@@ -2149,9 +2177,10 @@
+                                      uint16_t height)
+ {
+     MP4TrackId trackId =
+-        AddTrack(MP4_SUBTITLE_TRACK_TYPE, timescale);
++        AddTrack(MP4_TEXT_TRACK_TYPE, timescale);
+ 
+-    InsertChildAtom(MakeTrackName(trackId, "mdia.minf"), "nmhd", 0);
++    // InsertChildAtom(MakeTrackName(trackId, "mdia.minf"), "nmhd", 0);
++    (void)InsertChildAtom(MakeTrackName(trackId, "mdia.minf"), "gmhd", 0);
+ 
+     AddChildAtom(MakeTrackName(trackId, "mdia.minf.stbl.stsd"), "tx3g");
+ 
+@@ -2167,7 +2196,7 @@
+     pfontID->AddValue(1);
+ 
+     MP4StringProperty* pName = (MP4StringProperty*)((MP4TableProperty*)pFtabAtom->GetProperty(1))->GetProperty(1);
+-    pName->AddValue("Arial");
++    pName->AddValue("Serif");
+ 
+     SetTrackIntegerProperty(trackId, "mdia.minf.stbl.stsd.tx3g.fontID", 1);
+ 
+@@ -2179,6 +2208,13 @@
+         (MP4Property**)&pStsdCountProperty);
+     pStsdCountProperty->IncrementValue();
+ 
++    // add a "text" atom to the generic media header
++    // this is different to the stsd "text" atom added above
++    // truth be told, it's not clear what this second "text" atom does,
++    // but all iTunes Store movies (with chapter markers) have it,
++    // as do all movies with chapter tracks made by hand in QuickTime Pro
++    (void)AddChildAtom(MakeTrackName(trackId, "mdia.minf.gmhd"), "text");
++
+     return trackId;
+ }
+ 
+diff -ur src/mp4file.h src/mp4file.h
+--- src/mp4file.h	2012-05-20 15:11:53.000000000 -0700
++++ src/mp4file.h	2012-10-16 22:41:54.000000000 -0700
+@@ -305,6 +305,12 @@
+         uint16_t height,
+         uint8_t videoType);
+ 
++    MP4TrackId AddMP4JpegVideoTrack(
++        uint32_t timeScale,
++        MP4Duration sampleDuration,
++        uint16_t width,
++        uint16_t height);
++
+     MP4TrackId AddEncVideoTrack( // ismacryp
+         uint32_t timeScale,
+         MP4Duration sampleDuration,
+@@ -761,6 +767,10 @@
+         MP4Timestamp* pStartTime = NULL,
+         MP4Duration* pDuration = NULL);
+ 
++    void AddTrackReference2(const char* trefName,
++        MP4TrackId trackId,
++        MP4TrackId refTrackId);
++
+     /* "protected" interface to be used only by friends in library */
+ 
+     uint64_t GetPosition( File* file = NULL );
