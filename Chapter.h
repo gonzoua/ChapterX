@@ -24,5 +24,6 @@
 @property (nonatomic,assign) NSInteger startTime;
 
 - (id) initWithXMLNode: (NSXMLNode*)node;
+- (id) initWithXMLNode: (NSXMLNode*)node path:(NSString*)path;
 
 @end
