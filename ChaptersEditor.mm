@@ -34,7 +34,6 @@ NSData *loadImage(NSString *path)
         return nil;
 
     NSImageRep *rep = [[image representations] objectAtIndex:0];
-    [image setScalesWhenResized:YES];
     [image setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
 
     NSSize origSize = NSMakeSize([rep pixelsWide], [rep pixelsHigh]);
