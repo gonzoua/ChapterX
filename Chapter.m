@@ -13,7 +13,7 @@
 -(NSString *) stringForXPath:(NSString*)xpath error:(NSError**)error
 {
     NSArray *nodes = [self nodesForXPath:xpath error:error];
-
+    
     if ([nodes count])
         return [[nodes objectAtIndex:0] stringValue];
     else
@@ -28,7 +28,7 @@ static NSInteger timeToMilliseconds(NSString* timeString)
     NSInteger timeValue = 0;
     if ([chunks count] == 0)
         return 0;
-
+    
     int idx = 0;
     if ([chunks count] == 3) {
         timeValue += [[chunks objectAtIndex:idx] intValue] * 3600 * 1000;
@@ -72,20 +72,21 @@ static NSInteger timeToMilliseconds(NSString* timeString)
     self.title = [node stringForXPath:@"./title[1]" error:&xmlError];
     self.link = [node stringForXPath:@"./link[1]/@href" error:&xmlError];
     self.linkText = [node stringForXPath:@"./link[1]" error:&xmlError];
-    if (_xmlPath == nil)
+    
+    // do not set artPath if <picture> element is missing
+    NSString *path = [node stringForXPath:@"./picture[1]" error:&xmlError];
+    if (_xmlPath == nil || path == nil)
         self.artPath = [node stringForXPath:@"./picture[1]" error:&xmlError];
     else
     {
         NSString *path = [node stringForXPath:@"./picture[1]" error:&xmlError];
         self.artPath = [_xmlPath stringByAppendingPathComponent:path];
-        //  NSLog(@"Test: %@ -> %@", path, self.artPath);
     }
     return self;
 }
 
 - (id) initWithXMLNode: (NSXMLNode*)node path:(NSString*)path
 {
-    NSError *xmlError;
     self = [self init];
     _xmlPath = [path copy];
     self = [self initWithXMLNode:node];
