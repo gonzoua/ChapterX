@@ -114,7 +114,6 @@ NSData *generateSample(NSString *text, NSString *url)
     return result;
 }
 
-
 int addChapters(const char *mp4, NSArray *chapters)
 {
     if ([chapters count] == 0)
@@ -172,9 +171,6 @@ int addChapters(const char *mp4, NSArray *chapters)
     }
     // end
 
-
-
-
     MP4TrackId subtitlesTrack;
     if (CREATE_SUBTITLES) {
 
@@ -217,7 +213,6 @@ int addChapters(const char *mp4, NSArray *chapters)
         MP4WriteSample(mp4File, jpegAndOrChapterTrack,
                        (const uint8_t *)[img bytes], [img length], chap.duration*trackTimeScale/1000);
 
-
         if (CREATE_SUBTITLES) {
             NSData* subtitlesSample = generateSample(@"", @" ");
 
@@ -253,7 +248,6 @@ int addChapters(const char *mp4, NSArray *chapters)
 
         MP4WriteSample(mp4File, jpegAndOrChapterTrack,
                        (const uint8_t *)[img bytes], [img length], chap.duration*trackTimeScale/1000);
-
 
         if (CREATE_SUBTITLES) {
             NSData* subtitlesSample;
