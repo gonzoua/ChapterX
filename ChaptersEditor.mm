@@ -20,8 +20,6 @@ extern "C" {
 using namespace std;
 
 #define ITUNES_COVER_SIZE 300
-bool CREATE_SUBTITLES = false;
-bool CREATE_JPEG_TRACK = false;
 
 static
 NSData *loadImage(NSString *path)
@@ -116,6 +114,10 @@ NSData *generateSample(NSString *text, NSString *url)
 
 int addChapters(const char *mp4, NSArray *chapters)
 {
+
+    bool createSubtitles = false;
+    bool createJPEGTrack = false;
+
     if ([chapters count] == 0)
         return 0;
 
@@ -158,21 +160,21 @@ int addChapters(const char *mp4, NSArray *chapters)
     }
     if (numLinks != 0) {
         NSLog(@"Creating subtitle track for hyperlinks...");
-        CREATE_SUBTITLES = true;
+        createSubtitles = true;
     }
 
     MP4TrackId jpegAndOrChapterTrack;
     if (numPictureTags != 0) {
         NSLog(@"Creating video track for artwork...");
         jpegAndOrChapterTrack = MP4AddJpegVideoTrack(mp4File, trackTimeScale, MP4_INVALID_DURATION, 300, 300);
-        CREATE_JPEG_TRACK = true;
+        createJPEGTrack = true;
     } else {
         jpegAndOrChapterTrack = MP4AddChapterTextTrack(mp4File, 1);
     }
     // end
 
     MP4TrackId subtitlesTrack;
-    if (CREATE_SUBTITLES) {
+    if (createSubtitles) {
 
         // Add subtitles
         subtitlesTrack = MP4AddSubtitleTrack( mp4File, trackTimeScale, 300, 300 );
@@ -213,7 +215,7 @@ int addChapters(const char *mp4, NSArray *chapters)
         MP4WriteSample(mp4File, jpegAndOrChapterTrack,
                        (const uint8_t *)[img bytes], (uint32_t)[img length], chap.duration*trackTimeScale/1000);
 
-        if (CREATE_SUBTITLES) {
+        if (createSubtitles) {
             NSData* subtitlesSample = generateSample(@"", @" ");
 
             MP4WriteSample(mp4File, subtitlesTrack,
@@ -249,7 +251,7 @@ int addChapters(const char *mp4, NSArray *chapters)
         MP4WriteSample(mp4File, jpegAndOrChapterTrack,
                        (const uint8_t *)[img bytes], (uint32_t)[img length], chap.duration*trackTimeScale/1000);
 
-        if (CREATE_SUBTITLES) {
+        if (createSubtitles) {
             NSData* subtitlesSample;
             if (chapter.link != nil)
                 subtitlesSample = generateSample(chapter.linkText, chapter.link);
@@ -275,9 +277,9 @@ int addChapters(const char *mp4, NSArray *chapters)
     MP4AddTrackReference(mp4File, "tref.chap", jpegAndOrChapterTrack, refTrack);
 
     MP4SetTrackLanguage(mp4File, refTrack, "eng");
-    if (CREATE_JPEG_TRACK)
+    if (createJPEGTrack)
         MP4SetTrackLanguage(mp4File, jpegAndOrChapterTrack, "eng");
-    if (CREATE_SUBTITLES)
+    if (createSubtitles)
         MP4SetTrackLanguage(mp4File, subtitlesTrack, "eng");
 
     MP4Close(mp4File);
